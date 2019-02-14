@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MAB.SyntaxHighlighter", "MAB.SyntaxHighlighter\MAB.SyntaxHighlighter.fsproj", "{92F8487D-85AB-4786-87AD-419305CAAD72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92F8487D-85AB-4786-87AD-419305CAAD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F8487D-85AB-4786-87AD-419305CAAD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92F8487D-85AB-4786-87AD-419305CAAD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92F8487D-85AB-4786-87AD-419305CAAD72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF0F7C75-B5A3-4BED-9ED2-0283A93C9488}
+	EndGlobalSection
+EndGlobal
