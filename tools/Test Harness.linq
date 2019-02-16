@@ -9,34 +9,18 @@ Util.CurrentQueryPath
 |> Path.GetDirectoryName
 |> Directory.SetCurrentDirectory
 
-let code = @"
+let lang = "fsharp"
 
-// This is a comment
-var test = new DateTime(2019, 2, 10);
-
-/*
-Here's a multi-line comment
-It's on multiple lines
-*/
-for (int i = 0; i < 10; i ++)
-{
-    Console.WriteLine(i);
-}
-
-string s = ""This is a string."";
-
-"
+let code = File.ReadAllText (sprintf "samples\%s.txt" lang)
 
 let format =
     SyntaxHighlighter.formatCode SyntaxHighlighter.defaultLanguageMap
 
-let (ok, rx, html) = code |> format "cs"
+let (ok, rx, htmlOutput) = code |> format lang
 
-// rx.Value.ToString() |> Dump |> ignore
+htmlOutput |> Dump |> ignore
 
-html |> Dump |> ignore
-
-html
-|> (fun s -> ((File.ReadAllText "template.html"), html))
+htmlOutput
+|> (fun html -> ((File.ReadAllText "template.html"), html))
 |> (fun (tmpl, html) -> Regex.Replace (tmpl, "{{CONTENT}}", html))
 |> (fun output -> File.WriteAllText (@"output\index.html", output))

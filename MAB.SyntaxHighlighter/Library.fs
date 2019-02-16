@@ -75,6 +75,8 @@ module SyntaxHighlighter =
     let defaultLanguageMap = Map.ofList [
         ("cs", csharp)
         ("csharp", csharp)
+        ("fs", fsharp)
+        ("fsharp", fsharp)
     ]
 
     let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
@@ -87,7 +89,7 @@ module SyntaxHighlighter =
         str |> escape htmlReplacements
 
     let sanitiseRegex sb = 
-        sb |> escape' (htmlReplacements |> Array.append regexReplacements)
+        sb |> escape' regexReplacements
 
     let buildRegex (separated: string) =
         match separated |> isEmpty with
@@ -100,9 +102,12 @@ module SyntaxHighlighter =
 
     // Build a master regex with capturing groups
     // Note that the group numbers must match with the constants COMMENT_GROUP, OPERATOR_GROUP...
-    let concatenateRegex commentRx stringRx preprocessorRx keywordRx operatorsRx numberRx =
+    let concatenateRegex' commentRx stringRx preprocessorRx keywordRx operatorsRx numberRx =
         sprintf "(%s)|(%s)|(%s)|(%s)|(%s)|(%s)" 
             commentRx stringRx preprocessorRx keywordRx operatorsRx numberRx
+
+    let concatenateRegex lang preprocessorRx keywordRx operatorsRx =
+        concatenateRegex' lang.CommentMatcher lang.StringMatcher preprocessorRx keywordRx operatorsRx lang.NumberMatcher 
 
     let span cls s =
         sprintf "<span class=\"%s\">%s</span>" cls s
@@ -152,7 +157,7 @@ module SyntaxHighlighter =
             let preprocessorMatcher = lang.Preprocessors |> buildRegex
             let operatorMatcher = lang.Operators |> buildRegex
 
-            let allMatcher = concatenateRegex lang.CommentMatcher lang.StringMatcher preprocessorMatcher keywordMatcher operatorMatcher lang.NumberMatcher
+            let allMatcher = concatenateRegex lang preprocessorMatcher keywordMatcher operatorMatcher
 
             let rxOptions = 
                 if lang.CaseSensitive 

@@ -34,23 +34,16 @@ let csharp = {
 let fsharp = {
     CaseSensitive = true
 
-    StringMatcher = CLike.stringMatcher
-    CommentMatcher = CLike.commentMatcher
+    StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\)'"
+    CommentMatcher = @"\(\*.*?\*\)|//.*?(?=\r|\n)"
     NumberMatcher = defaultNumberMatcher
 
-    Operators = ". : + - * / % & | ^ ! ~ = < > ?"
+    Operators = "+ - _ -> ->> <- [< >] [| |] [ ] <@@ @@> <@| |@> <@. .@> <@ @> |> < > |"
 
-    Preprocessors = "#if #else #elif #endif #define #undef #warning "
-                  + "#error #line #region #endregion #pragma"
+    Preprocessors = "#light"
 
-    Keywords = "abstract as base bool break byte case catch char "
-             + "checked class const continue decimal default delegate do double else "
-             + "enum event explicit extern false finally fixed float for foreach goto "
-             + "if implicit in int interface internal is lock long namespace new null "
-             + "object operator out override partial params private protected public readonly "
-             + "ref return sbyte sealed short sizeof stackalloc static string struct "
-             + "switch this throw true try typeof uint ulong unchecked unsafe ushort "
-             + "using value virtual void volatile where while yield "
-             + "var from select where orderby descending join on equals let ascending"
-             + "into group by await async dynamic"
+    Keywords = "abstract and as assert asr begin class default delegate do! do done downcast downto else "
+             + "end enum exception extern false finally for fun function if in inherit interface land lazy "
+             + "use! use let! let lor lsl lsr lxor match member mod module mutable namespace new null of open or override "
+             + "rec return! return sig static struct then to true try type val when inline upcast while with void yield! yield"
 }

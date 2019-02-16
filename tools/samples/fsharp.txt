@@ -1,0 +1,13 @@
+
+
+module Test =
+    let test i = i * 2
+
+let s = "This is a string"
+
+let list = [1; 2; 3; 4; 5]
+
+list 
+|> List.map (fun i -> i * 10)
+|> List.iter Console.WriteLine
+
