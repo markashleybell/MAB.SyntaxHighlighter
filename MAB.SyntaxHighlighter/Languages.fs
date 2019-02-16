@@ -1,6 +1,6 @@
 ﻿module MAB.SyntaxHighlighter.Languages
 
-let defaultNumberMatcher = @"[+-]?\d+(?:\.\d+)?"
+let defaultNumberMatcher = @"\b[+-]?\d+(?:\.\d+)?"
 
 module CLike =
     let commentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
@@ -46,4 +46,19 @@ let fsharp = {
              + "end enum exception extern false finally for fun function if in inherit interface land lazy "
              + "use! use let! let lor lsl lsr lxor match member mod module mutable namespace new null of open or override "
              + "rec return! return sig static struct then to true try type val when inline upcast while with void yield! yield"
+}
+
+let python = {
+    CaseSensitive = true
+
+    StringMatcher = @"r?"""""".*?(?!\\).""""""|r?""""|r?"".*?(?!\\).""|r?''|r?'[^\s]*?(?!\\)'"
+    CommentMatcher = @"#.*?(?=\r|\n)"
+    NumberMatcher = defaultNumberMatcher
+
+    Operators = "+ - * / % <> != == < >"
+
+    Preprocessors = ""
+
+    Keywords = "False None True and as assert async await break class continue def del elif else except finally for from "
+             + "global if import in is lambda nonlocal not or pass raise return try while with yield"
 }

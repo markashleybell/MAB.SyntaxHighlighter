@@ -77,6 +77,7 @@ module SyntaxHighlighter =
         ("csharp", csharp)
         ("fs", fsharp)
         ("fsharp", fsharp)
+        ("python", python)
     ]
 
     let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
