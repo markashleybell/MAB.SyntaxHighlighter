@@ -28,7 +28,7 @@ string s = ""This is a string."";
 "
 
 let format =
-    SyntaxHighlighter.formatCode Languages.defaultLanguageMap
+    SyntaxHighlighter.formatCode SyntaxHighlighter.defaultLanguageMap
 
 let (ok, rx, html) = code |> format "cs"
 

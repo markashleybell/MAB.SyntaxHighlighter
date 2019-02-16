@@ -1,7 +1,6 @@
 ﻿namespace MAB.SyntaxHighlighter
 
 type Language = {
-    Name: string
     CaseSensitive: bool
     StringMatcher: string
     NumberMatcher: string

@@ -67,9 +67,15 @@ module Constants =
 module SyntaxHighlighter =
     open Constants
     open Utils
+    open Languages
     open System.IO
     open System.Text
     open System.Text.RegularExpressions
+
+    let defaultLanguageMap = Map.ofList [
+        ("cs", csharp)
+        ("csharp", csharp)
+    ]
 
     let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
 

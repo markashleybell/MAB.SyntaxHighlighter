@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Types.fs" />
-    <Compile Include="CSharp.fs" />
+    <Compile Include="Languages.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
 
