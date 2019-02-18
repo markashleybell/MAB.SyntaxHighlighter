@@ -31,44 +31,9 @@ freely, subject to the following restrictions:
 
 namespace MAB.SyntaxHighlighter
 
-module Utils = 
-    open System
-    open System.Text
-
-    let isEmpty (s: string) = String.IsNullOrWhiteSpace s
-
-    let trim (s: string) = s.Trim()
-
-    let escape' (substitutions: (string * string) array) (sb: StringBuilder) =
-        substitutions |> Seq.iter (fun (m, r) -> sb.Replace(m, r) |> ignore)
-        sb
-
-    let escape (substitutions: (string * string) array) (input: string) =
-        new StringBuilder(input) 
-        |> escape' substitutions 
-        |> (fun sb -> sb.ToString())
-
-module Constants = 
-    [<Literal>]
-    let COMMENT_GROUP = 1
-    [<Literal>]
-    let STRING_LITERAL_GROUP = 2
-    [<Literal>]
-    let PREPROCESSOR_KEYWORD_GROUP = 3
-    [<Literal>]
-    let KEYWORD_GROUP = 4
-    [<Literal>]
-    let OPERATOR_GROUP = 5
-    [<Literal>]
-    let NUMBER_GROUP = 6
-    [<Literal>]
-    let IMPOSSIBLE_MATCH_REGEX = "(?!.*)_{37}(?<!.*)"
-
 module SyntaxHighlighter =
-    open Constants
     open Utils
     open Languages
-    open System.IO
     open System.Text
     open System.Text.RegularExpressions
 
@@ -101,49 +66,8 @@ module SyntaxHighlighter =
             sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
             sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
 
-    // Build a master regex with capturing groups
-    // Note that the group numbers must match with the constants COMMENT_GROUP, OPERATOR_GROUP...
-    let concatenateRegex' commentRx stringRx preprocessorRx keywordRx operatorsRx numberRx =
-        sprintf "(%s)|(%s)|(%s)|(%s)|(%s)|(%s)" 
-            commentRx stringRx preprocessorRx keywordRx operatorsRx numberRx
-
     let concatenateRegex lang preprocessorRx keywordRx operatorsRx =
-        concatenateRegex' lang.CommentMatcher lang.StringMatcher preprocessorRx keywordRx operatorsRx lang.NumberMatcher 
-
-    let span cls s =
-        sprintf "<span class=\"%s\">%s</span>" cls s
-
-    let matchEval (m: Match) =
-        let wrapComment s = 
-            let sr = new StringReader(s)
-            
-            let sb = new StringBuilder()
-
-            let mutable line = sr.ReadLine()
-
-            while line <> null do
-                if sb.Length > 0 then sb.Append("\n") |> ignore
-
-                sb.Append(line |> span "c") |> ignore
-
-                line <- sr.ReadLine()
-
-            sb.ToString()
-
-        let matchGroups = [
-            (m.Groups.[COMMENT_GROUP], wrapComment)
-            (m.Groups.[STRING_LITERAL_GROUP], (span "s"))
-            (m.Groups.[PREPROCESSOR_KEYWORD_GROUP], (span "pp"))
-            (m.Groups.[KEYWORD_GROUP], (span "k"))
-            (m.Groups.[OPERATOR_GROUP], (span "o"))
-            (m.Groups.[NUMBER_GROUP], (span "n"))
-        ]
-
-        let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)
-
-        match suceededMatch with
-        | None -> failwith "Match type is unknown"
-        | Some (_, wrapf) -> wrapf (m.ToString())
+        Defaults.concatenateRegex lang.CommentMatcher lang.StringMatcher preprocessorRx keywordRx operatorsRx lang.NumberMatcher 
 
     let formatCode (languages: Map<string, Language>) languageId (code: string) = 
         let language =  languages.TryFind languageId
@@ -167,5 +91,5 @@ module SyntaxHighlighter =
             
             let matcher = new Regex(allMatcher, rxOptions)
 
-            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(matchEval)))
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
 

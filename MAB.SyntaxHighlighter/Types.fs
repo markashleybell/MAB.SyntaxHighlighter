@@ -1,5 +1,7 @@
 ﻿namespace MAB.SyntaxHighlighter
 
+open System.Text.RegularExpressions
+
 type Language = {
     CaseSensitive: bool
     StringMatcher: string
@@ -8,4 +10,5 @@ type Language = {
     Operators: string
     Preprocessors: string
     Keywords: string
+    MatchEvaluator: Match -> string
 }
