@@ -30,12 +30,6 @@ module Defaults =
 
     let stringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
 
-    // Build a master regex with capturing groups
-    // Note that the group numbers must match with the constants COMMENT_GROUP, OPERATOR_GROUP...
-    let concatenateRegex comment string preprocessor keyword operators number =
-        sprintf "(%s)|(%s)|(%s)|(%s)|(%s)|(%s)" 
-            comment string preprocessor keyword operators number
-
     let matchEvaluator (m: Match) =
         let wrapComment s = 
             let sr = new StringReader(s)
@@ -68,9 +62,7 @@ module Defaults =
         | None -> failwith "Match type is unknown"
         | Some (_, wrapf) -> wrapf (m.ToString())
 
-let csharp = {
-    CaseSensitive = true
-
+let csharp = CLikeLanguage {
     StringMatcher = Defaults.stringMatcher
     CommentMatcher = Defaults.commentMatcher
     NumberMatcher = Defaults.numberMatcher
@@ -94,9 +86,7 @@ let csharp = {
     MatchEvaluator = Defaults.matchEvaluator
 }
 
-let fsharp = {
-    CaseSensitive = true
-
+let fsharp = SignificantWhiteSpaceLanguage {
     StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\)'"
     CommentMatcher = @"\(\*.*?\*\)|//.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
@@ -113,9 +103,22 @@ let fsharp = {
     MatchEvaluator = Defaults.matchEvaluator
 }
 
-let python = {
-    CaseSensitive = true
+let python = SignificantWhiteSpaceLanguage {
+    StringMatcher = @"r?"""""".*?(?!\\).""""""|r?""""|r?"".*?(?!\\).""|r?''|r?'[^\s]*?(?!\\)'"
+    CommentMatcher = @"#.*?(?=\r|\n)"
+    NumberMatcher = Defaults.numberMatcher
 
+    Operators = "+ - * / % <> != == < >"
+
+    Preprocessors = ""
+
+    Keywords = "False None True and as assert async await break class continue def del elif else except finally for from "
+             + "global if import in is lambda nonlocal not or pass raise return try while with yield"
+
+    MatchEvaluator = Defaults.matchEvaluator
+}
+
+let html = MarkupLanguage {
     StringMatcher = @"r?"""""".*?(?!\\).""""""|r?""""|r?"".*?(?!\\).""|r?''|r?'[^\s]*?(?!\\)'"
     CommentMatcher = @"#.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher

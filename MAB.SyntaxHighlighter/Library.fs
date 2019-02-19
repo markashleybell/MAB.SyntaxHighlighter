@@ -66,30 +66,48 @@ module SyntaxHighlighter =
             sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
             sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
 
-    let concatenateRegex lang preprocessorRx keywordRx operatorsRx =
-        Defaults.concatenateRegex lang.CommentMatcher lang.StringMatcher preprocessorRx keywordRx operatorsRx lang.NumberMatcher 
+    // comment string preprocessor keyword operators number
+    let concatenateRegex rxList =
+        rxList |> List.map (sprintf "(%s)") |> String.concat "|"
 
     let formatCode (languages: Map<string, Language>) languageId (code: string) = 
-        let language =  languages.TryFind languageId
+        let found =  languages.TryFind languageId
 
         let code' = code |> trim
 
-        match language with
+        match found with
         | None -> 
             (false, None, code' |> escapeHtml)
-        | Some lang -> 
-            let keywordMatcher = lang.Keywords |> buildRegex
-            let preprocessorMatcher = lang.Preprocessors |> buildRegex
-            let operatorMatcher = lang.Operators |> buildRegex
+        | Some langType -> 
+            match langType with
+            | CLikeLanguage lang ->
+                let regexList = [
+                    lang.CommentMatcher
+                    lang.StringMatcher
+                    (lang.Preprocessors |> buildRegex)
+                    (lang.Keywords |> buildRegex)
+                    (lang.Operators |> buildRegex)
+                    lang.NumberMatcher
+                ]
 
-            let allMatcher = concatenateRegex lang preprocessorMatcher keywordMatcher operatorMatcher
+                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
 
-            let rxOptions = 
-                if lang.CaseSensitive 
-                then RegexOptions.Singleline 
-                else RegexOptions.Singleline ||| RegexOptions.IgnoreCase
-            
-            let matcher = new Regex(allMatcher, rxOptions)
+                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
+            | SignificantWhiteSpaceLanguage lang ->
+                let regexList = [
+                    lang.CommentMatcher
+                    lang.StringMatcher
+                    (lang.Preprocessors |> buildRegex)
+                    (lang.Keywords |> buildRegex)
+                    (lang.Operators |> buildRegex)
+                    lang.NumberMatcher
+                ]
 
-            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
+                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
+
+                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
+            | MarkupLanguage lang ->
+                (false, None, code' |> escapeHtml)
+            | QueryLanguage lang -> 
+                (false, None, code' |> escapeHtml)
 

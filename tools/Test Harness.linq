@@ -9,7 +9,7 @@ Util.CurrentQueryPath
 |> Path.GetDirectoryName
 |> Directory.SetCurrentDirectory
 
-let lang = "python"
+let lang = "html"
 
 let code = File.ReadAllText (sprintf "samples\%s.txt" lang)
 

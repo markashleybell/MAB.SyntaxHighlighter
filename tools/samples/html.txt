@@ -1,36 +1,11 @@
-
-
-import codecs
-import datetime
-import glob
-import os
-import re
-import markdown
-
-def parse_iso8601_date(date_string):
-    """Parse an ISO 8601 date string and return a date object."""
-    return datetime.datetime.strptime(date_string, "%Y-%m-%d %H:%M")
-
-def get_page_metadata(source_file_spec, header_regex, cdn_url):
-    """Build a sorted list of page metadata."""
-    page_metadata = []
-
-    for path in glob.glob(source_file_spec):
-        # Get the filename portion of the path
-        source_filename = os.path.split(path)[1]
-        # Replace the .md extension with .html to get the output filename
-        output_filename = re.sub(r"(?si)^(.*\.)(md)$", r"\1html", source_filename)
-        markdown_source = codecs.open(path, "r", "utf-8")
-        post_data = parse_page_data(
-            header_regex,
-            markdown_source.read(),
-            source_filename,
-            output_filename,
-            cdn_url
-        )
-        page_metadata.append(post_data)
-
-    # Sort the file list by updated date descending
-    return sorted(page_metadata, key=lambda k: k["updated"], reverse=True)
-
-
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Page</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1 class="page-header">This is a test</h1>
+        <p>This is just to <a href="https://www.google.com" target="blank">test</a> syntax highlighting.</p>
+    </body>
+</html>
