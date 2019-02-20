@@ -9,16 +9,34 @@ Util.CurrentQueryPath
 |> Path.GetDirectoryName
 |> Directory.SetCurrentDirectory
 
-let lang = "html"
+let readFile lang = 
+    File.ReadAllText (sprintf "samples\%s.txt" lang)
 
-let code = File.ReadAllText (sprintf "samples\%s.txt" lang)
+let languages = ["html"; "csharp"; "fsharp"; "python"]
+
+let sources = 
+    languages |> List.mapi (fun ord lang -> ((ord, lang), lang |> readFile)) |> Map.ofList
 
 let format =
     SyntaxHighlighter.formatCode SyntaxHighlighter.defaultLanguageMap
 
-let (ok, rx, htmlOutput) = code |> format lang
+let results = 
+    sources |> Map.map (fun (_, lang) code -> code |> format lang)
 
-htmlOutput |> Dump |> ignore
+// results |> Dump |> ignore
+
+let codeBlock lang code = 
+    sprintf "<h2>%s</h2><pre class=\"code\"><code>%s</code></pre>" lang code
+
+let htmlOutput =
+    results 
+    |> Map.map (fun (_, _) (_, _, code) -> code)
+    |> Map.toList
+    |> List.sortByDescending (fun ((ord, _), _)-> ord)
+    |> List.fold (fun out ((_, lang), code) -> (codeBlock lang code) :: out) []
+    |> String.concat ""
+
+// htmlOutput |> Dump |> ignore
 
 htmlOutput
 |> (fun html -> ((File.ReadAllText "template.html"), html))

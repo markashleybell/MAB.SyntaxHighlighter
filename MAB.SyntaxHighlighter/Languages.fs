@@ -26,10 +26,6 @@ module Defaults =
     
     let numberMatcher = @"\b[+-]?\d+(?:\.\d+)?"
 
-    let commentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
-
-    let stringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
-
     let matchEvaluator (m: Match) =
         let wrapComment s = 
             let sr = new StringReader(s)
@@ -63,8 +59,8 @@ module Defaults =
         | Some (_, wrapf) -> wrapf (m.ToString())
 
 let csharp = CLikeLanguage {
-    StringMatcher = Defaults.stringMatcher
-    CommentMatcher = Defaults.commentMatcher
+    StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
+    CommentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
 
     Operators = ". : + - * / % & | ^ ! ~ = < > ?"
