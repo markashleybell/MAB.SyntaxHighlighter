@@ -12,6 +12,7 @@ Util.CurrentQueryPath
 let readFile lang = 
     File.ReadAllText (sprintf "samples\%s.txt" lang)
 
+// let languages = ["html"] 
 let languages = ["html"; "csharp"; "fsharp"; "python"]
 
 let sources = 
@@ -23,7 +24,7 @@ let format =
 let results = 
     sources |> Map.map (fun (_, lang) code -> code |> format lang)
 
-// results |> Dump |> ignore
+results |> Dump |> ignore
 
 let codeBlock lang code = 
     sprintf "<h2>%s</h2><pre class=\"code\"><code>%s</code></pre>" lang code
@@ -36,7 +37,7 @@ let htmlOutput =
     |> List.fold (fun out ((_, lang), code) -> (codeBlock lang code) :: out) []
     |> String.concat ""
 
-// htmlOutput |> Dump |> ignore
+htmlOutput |> Dump |> ignore
 
 htmlOutput
 |> (fun html -> ((File.ReadAllText "template.html"), html))

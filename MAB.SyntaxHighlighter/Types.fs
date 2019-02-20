@@ -22,13 +22,13 @@ type SignificantWhiteSpaceLanguage = {
     MatchEvaluator: Match -> string
 }
 
-type MarkupLanguage = {
-    StringMatcher: string
-    NumberMatcher: string
+type XmlLanguage = {
+    EmbeddedJavascriptMatcher: string
     CommentMatcher: string
-    Operators: string
-    Preprocessors: string
-    Keywords: string
+    TagDelimiterMatcher: string
+    TagNameMatcher: string
+    TagAttributesMatcher: string
+    EntityMatcher: string
     MatchEvaluator: Match -> string
 }
 
@@ -45,5 +45,5 @@ type QueryLanguage = {
 type Language =
     | CLikeLanguage of CLikeLanguage
     | SignificantWhiteSpaceLanguage of SignificantWhiteSpaceLanguage
-    | MarkupLanguage of MarkupLanguage
+    | XmlLanguage of XmlLanguage
     | QueryLanguage of QueryLanguage

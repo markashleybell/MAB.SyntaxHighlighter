@@ -43,6 +43,7 @@ module SyntaxHighlighter =
         ("fs", fsharp)
         ("fsharp", fsharp)
         ("python", python)
+        ("html", html)
     ]
 
     let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
@@ -66,7 +67,8 @@ module SyntaxHighlighter =
             sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
             sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
 
-    // comment string preprocessor keyword operators number
+    // This function relies on the fact that regexLists are defined with the regexes in the same order
+    // as the group name constants, e.g. comment string preprocessor keyword operators number
     let concatenateRegex rxList =
         rxList |> List.map (sprintf "(%s)") |> String.concat "|"
 
@@ -92,7 +94,7 @@ module SyntaxHighlighter =
 
                 let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
 
-                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
+                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
             | SignificantWhiteSpaceLanguage lang ->
                 let regexList = [
                     lang.CommentMatcher
@@ -105,9 +107,21 @@ module SyntaxHighlighter =
 
                 let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
 
-                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(Defaults.matchEvaluator)))
-            | MarkupLanguage lang ->
-                (false, None, code' |> escapeHtml)
+                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
+            | XmlLanguage lang ->
+                let regexList = [
+                    lang.EmbeddedJavascriptMatcher
+                    lang.CommentMatcher
+                    lang.TagDelimiterMatcher
+                    lang.TagNameMatcher
+                    lang.TagAttributesMatcher
+                    lang.EntityMatcher
+                ]
+
+                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.IgnoreCase ||| RegexOptions.Singleline)
+
+                // Note that for HTML, we escape the HTML code *before* highlighting
+                (true, Some matcher, matcher.Replace(code' |> escapeHtml, new MatchEvaluator(lang.MatchEvaluator)))
             | QueryLanguage lang -> 
                 (false, None, code' |> escapeHtml)
 
