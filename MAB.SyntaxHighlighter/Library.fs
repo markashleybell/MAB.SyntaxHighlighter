@@ -52,7 +52,7 @@ module SyntaxHighlighter =
         [|'&'; '?'; '*'; '.'; '<'; '>'; '['; ']'; '^'; '|'; '('; ')'; '#'; '+'|] 
         |> Array.map (fun c -> (c.ToString(), c |> sprintf @"\%c"))
 
-    let escapeHtml str =
+    let htmlEncode str =
         str |> escape htmlReplacements
 
     let sanitiseRegex sb = 
@@ -63,7 +63,9 @@ module SyntaxHighlighter =
         | true -> 
             IMPOSSIBLE_MATCH_REGEX
         | false -> 
-            let sb = new StringBuilder(separated) |> sanitiseRegex
+            // We escape HTML chars in the list of matches before creating the regex
+            // This way, they match correctly on HTML-escaped code
+            let sb = new StringBuilder(separated |> htmlEncode) |> sanitiseRegex
             sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
             sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
 
@@ -75,11 +77,12 @@ module SyntaxHighlighter =
     let formatCode (languages: Map<string, Language>) languageId (code: string) = 
         let found =  languages.TryFind languageId
 
-        let code' = code |> trim
+        // Note that we escape HTML chars at this point
+        let code' = code |> trim |> htmlEncode
 
         match found with
         | None -> 
-            (false, None, code' |> escapeHtml)
+            (false, None, code')
         | Some langType -> 
             match langType with
             | CLikeLanguage lang ->
@@ -120,8 +123,7 @@ module SyntaxHighlighter =
 
                 let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.IgnoreCase ||| RegexOptions.Singleline)
 
-                // Note that for HTML, we escape the HTML code *before* highlighting
-                (true, Some matcher, matcher.Replace(code' |> escapeHtml, new MatchEvaluator(lang.MatchEvaluator)))
+                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
             | QueryLanguage lang -> 
-                (false, None, code' |> escapeHtml)
+                (false, None, code')
 
