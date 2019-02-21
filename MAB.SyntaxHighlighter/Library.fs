@@ -29,101 +29,100 @@ freely, subject to the following restrictions:
 
 *)
 
-namespace MAB.SyntaxHighlighter
+module MAB.SyntaxHighlighter.SyntaxHighlighter
 
-module SyntaxHighlighter =
-    open Utils
-    open Languages
-    open System.Text
-    open System.Text.RegularExpressions
+open Utils
+open Languages
+open System.Text
+open System.Text.RegularExpressions
 
-    let defaultLanguageMap = Map.ofList [
-        ("cs", csharp)
-        ("csharp", csharp)
-        ("fs", fsharp)
-        ("fsharp", fsharp)
-        ("python", python)
-        ("html", html)
-    ]
+let defaultLanguageMap = Map.ofList [
+    ("cs", csharp)
+    ("csharp", csharp)
+    ("fs", fsharp)
+    ("fsharp", fsharp)
+    ("python", python)
+    ("html", html)
+]
 
-    let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
+let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
 
-    let regexReplacements = 
-        [|'&'; '?'; '*'; '.'; '<'; '>'; '['; ']'; '^'; '|'; '('; ')'; '#'; '+'|] 
-        |> Array.map (fun c -> (c.ToString(), c |> sprintf @"\%c"))
+let regexReplacements = 
+    [|'&'; '?'; '*'; '.'; '<'; '>'; '['; ']'; '^'; '|'; '('; ')'; '#'; '+'|] 
+    |> Array.map (fun c -> (c.ToString(), c |> sprintf @"\%c"))
 
-    let htmlEncode str =
-        str |> escape htmlReplacements
+let htmlEncode str =
+    str |> escape htmlReplacements
 
-    let sanitiseRegex sb = 
-        sb |> escape' regexReplacements
+let sanitiseRegex sb = 
+    sb |> escape' regexReplacements
 
-    let buildRegex (separated: string) =
-        match separated |> isEmpty with
-        | true -> 
-            IMPOSSIBLE_MATCH_REGEX
-        | false -> 
-            // We escape HTML chars in the list of matches before creating the regex
-            // This way, they match correctly on HTML-escaped code
-            let sb = new StringBuilder(separated |> htmlEncode) |> sanitiseRegex
-            sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
-            sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
+let buildRegex (separated: string) =
+    match separated |> isEmpty with
+    | true -> 
+        IMPOSSIBLE_MATCH_REGEX
+    | false -> 
+        // We escape HTML chars in the list of matches before creating the regex
+        // This way, they match correctly on HTML-escaped code
+        let sb = new StringBuilder(separated |> htmlEncode) |> sanitiseRegex
+        sb.Replace(" ", @"(?=\W|$)|(?<=^|\W)") |> ignore
+        sb.ToString() |> sprintf @"(?<=^|\W)%s(?=\W|$)"
 
-    // This function relies on the fact that regexLists are defined with the regexes in the same order
-    // as the group name constants, e.g. comment string preprocessor keyword operators number
-    let concatenateRegex rxList =
-        rxList |> List.map (sprintf "(%s)") |> String.concat "|"
+// This function relies on the fact that regexLists are defined with the regexes in the same order
+// as the group name constants, e.g. comment string preprocessor keyword operators number
+let concatenateRegex rxList =
+    rxList |> List.map (sprintf "(%s)") |> String.concat "|"
 
-    let formatCode (languages: Map<string, Language>) languageId (code: string) = 
-        let found =  languages.TryFind languageId
+let formatCode (languages: Map<string, Language>) languageId (code: string) = 
+    let found =  languages.TryFind languageId
 
-        // Note that we escape HTML chars at this point
-        let code' = code |> trim |> htmlEncode
+    // Note that we escape HTML chars at this point
+    let code' = code |> trim |> htmlEncode
 
-        match found with
-        | None -> 
+    match found with
+    | None -> 
+        (false, None, code')
+    | Some langType -> 
+        match langType with
+        | CLikeLanguage lang ->
+            let regexList = [
+                lang.CommentMatcher
+                lang.StringMatcher
+                (lang.Preprocessors |> buildRegex)
+                (lang.Keywords |> buildRegex)
+                (lang.Operators |> buildRegex)
+                lang.NumberMatcher
+            ]
+
+            let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
+
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
+        | SignificantWhiteSpaceLanguage lang ->
+            let regexList = [
+                lang.CommentMatcher
+                lang.StringMatcher
+                (lang.Preprocessors |> buildRegex)
+                (lang.Keywords |> buildRegex)
+                (lang.Operators |> buildRegex)
+                lang.NumberMatcher
+            ]
+
+            let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
+
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
+        | XmlLanguage lang ->
+            let regexList = [
+                lang.EmbeddedJavascriptMatcher
+                lang.CommentMatcher
+                lang.TagDelimiterMatcher
+                lang.TagNameMatcher
+                lang.TagAttributesMatcher
+                lang.EntityMatcher
+            ]
+
+            let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.IgnoreCase ||| RegexOptions.Singleline)
+
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
+        | QueryLanguage lang -> 
             (false, None, code')
-        | Some langType -> 
-            match langType with
-            | CLikeLanguage lang ->
-                let regexList = [
-                    lang.CommentMatcher
-                    lang.StringMatcher
-                    (lang.Preprocessors |> buildRegex)
-                    (lang.Keywords |> buildRegex)
-                    (lang.Operators |> buildRegex)
-                    lang.NumberMatcher
-                ]
-
-                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
-
-                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
-            | SignificantWhiteSpaceLanguage lang ->
-                let regexList = [
-                    lang.CommentMatcher
-                    lang.StringMatcher
-                    (lang.Preprocessors |> buildRegex)
-                    (lang.Keywords |> buildRegex)
-                    (lang.Operators |> buildRegex)
-                    lang.NumberMatcher
-                ]
-
-                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
-
-                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
-            | XmlLanguage lang ->
-                let regexList = [
-                    lang.EmbeddedJavascriptMatcher
-                    lang.CommentMatcher
-                    lang.TagDelimiterMatcher
-                    lang.TagNameMatcher
-                    lang.TagAttributesMatcher
-                    lang.EntityMatcher
-                ]
-
-                let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.IgnoreCase ||| RegexOptions.Singleline)
-
-                (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
-            | QueryLanguage lang -> 
-                (false, None, code')
 

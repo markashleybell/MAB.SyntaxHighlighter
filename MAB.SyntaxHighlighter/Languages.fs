@@ -81,7 +81,7 @@ module Defaults =
     let attributeMatchEvaluator (m: Match) = 
         let matchGroups = [
             (m.Groups.[ATTRIBUTE_VALUE_GROUP], (span "s"))
-            (m.Groups.[ATTRIBUTE_NAME_GROUP], (span "k"))
+            (m.Groups.[ATTRIBUTE_NAME_GROUP], (span "a"))
         ]
 
         let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)
@@ -100,8 +100,8 @@ module Defaults =
         let matchGroups = [
             (m.Groups.[EMBEDDED_JAVASCRIPT_GROUP], (span "s"))
             (m.Groups.[COMMENT_GROUP], wrapComment)
-            (m.Groups.[TAG_DELIMITER_GROUP], (span "i"))
-            (m.Groups.[TAG_NAME_GROUP], (span "o"))
+            (m.Groups.[TAG_DELIMITER_GROUP], (span "p"))
+            (m.Groups.[TAG_NAME_GROUP], (span "t"))
             (m.Groups.[TAG_ATTRIBUTES_GROUP], replaceAttributes)
             (m.Groups.[ENTITY_GROUP], (span "k"))
         ]

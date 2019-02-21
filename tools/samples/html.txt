@@ -6,6 +6,9 @@
     </head>
     <body>
         <h1 class="page-header">This is a test</h1>
-        <p>This is just to <a href="https://www.google.com" target="blank">test</a> syntax highlighting.</p>
+        <p>
+            This is just to <a href="https://google.com" target="blank">test</a> 
+            syntax highlighting.
+        </p>
     </body>
 </html>
