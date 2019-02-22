@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1-alpha</Version>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/markashleybell/MAB.SyntaxHighlighter.git</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/markashleybell/MAB.SyntaxHighlighter/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/markashleybell/MAB.SyntaxHighlighter</PackageProjectUrl>
+    <Copyright>© Mark Ashley Bell 2019</Copyright>
+    <Description>Basic, extensible .NET server-side syntax highlighting library.</Description>
+    <PackageTags>syntax highlighter</PackageTags>
+    <Company>Mark Ashley Bell</Company>
+    <Authors>Mark Ashley Bell</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.6.1" />
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

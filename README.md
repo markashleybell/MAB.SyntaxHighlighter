@@ -1,6 +1,11 @@
-## Prerequisites
+# MAB.SyntaxHighlighter
 
-- [.NET Framework 4.7](https://dotnet.microsoft.com/download) (or later)
+This code was inspired by (and heavily borrows from) the CSharpFormat code
+by Jean-Claude Manoli. The original code was previously (but is no longer)
+available at: http://www.manoli.net/csharpformat/
+
+A reference version is available here:
+https://github.com/fsprojects/FSharp.Formatting/tree/master/src/CSharpFormat
 
 ## TODO
 
