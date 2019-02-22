@@ -12,9 +12,7 @@ Util.CurrentQueryPath
 let readFile lang = 
     File.ReadAllText (sprintf "samples\%s.txt" lang)
 
-// let languages = ["html"] 
-// let languages = ["python"] 
-let languages = ["html"; "csharp"; "fsharp"; "python"]
+let languages = ["json"; "javascript"; "html"; "csharp"; "fsharp"; "python"]
 
 let sources = 
     languages |> List.mapi (fun ord lang -> ((ord, lang), lang |> readFile)) |> Map.ofList

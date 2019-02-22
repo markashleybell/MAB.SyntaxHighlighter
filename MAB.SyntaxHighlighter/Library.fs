@@ -41,6 +41,9 @@ let defaultLanguageMap = Map.ofList [
     ("csharp", csharp)
     ("fs", fsharp)
     ("fsharp", fsharp)
+    ("js", javascript)
+    ("javascript", javascript)
+    ("json", javascript)
     ("python", python)
     ("html", html)
 ]

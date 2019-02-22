@@ -5,7 +5,5 @@
 ## TODO
 
 - SQL
-- Javascript
-- Typescript
 - CSS
 - Embedded language support for HTML (CSS, JS, Razor?)
