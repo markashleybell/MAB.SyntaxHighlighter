@@ -6,6 +6,7 @@ type CLikeLanguage = {
     StringMatcher: string
     NumberMatcher: string
     CommentMatcher: string
+    FunctionMatcher: string
     Operators: string
     Preprocessors: string
     Keywords: string
@@ -16,6 +17,7 @@ type SignificantWhiteSpaceLanguage = {
     StringMatcher: string
     NumberMatcher: string
     CommentMatcher: string
+    FunctionMatcher: string
     Operators: string
     Preprocessors: string
     Keywords: string

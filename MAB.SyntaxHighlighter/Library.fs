@@ -92,6 +92,7 @@ let formatCode (languages: Map<string, Language>) languageId (code: string) =
                 (lang.Keywords |> buildRegex)
                 (lang.Operators |> buildRegex)
                 lang.NumberMatcher
+                lang.FunctionMatcher
             ]
 
             let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
@@ -105,6 +106,7 @@ let formatCode (languages: Map<string, Language>) languageId (code: string) =
                 (lang.Keywords |> buildRegex)
                 (lang.Operators |> buildRegex)
                 lang.NumberMatcher
+                lang.FunctionMatcher
             ]
 
             let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)

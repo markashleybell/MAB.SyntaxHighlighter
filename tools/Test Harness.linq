@@ -13,6 +13,7 @@ let readFile lang =
     File.ReadAllText (sprintf "samples\%s.txt" lang)
 
 // let languages = ["html"] 
+// let languages = ["python"] 
 let languages = ["html"; "csharp"; "fsharp"; "python"]
 
 let sources = 

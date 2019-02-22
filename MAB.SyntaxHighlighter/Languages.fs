@@ -40,6 +40,8 @@ module Defaults =
     let OPERATOR_GROUP = 5
     [<Literal>]
     let NUMBER_GROUP = 6
+    [<Literal>]
+    let FUNCTION_GROUP = 7
     
     let numberMatcher = @"\b[+-]?\d+(?:\.\d+)?"
 
@@ -51,6 +53,7 @@ module Defaults =
             (m.Groups.[KEYWORD_GROUP], (span "k"))
             (m.Groups.[OPERATOR_GROUP], (span "o"))
             (m.Groups.[NUMBER_GROUP], (span "n"))
+            (m.Groups.[FUNCTION_GROUP], (span "f"))
         ]
 
         let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)
@@ -116,8 +119,9 @@ let csharp = CLikeLanguage {
     StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
     CommentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
+    FunctionMatcher = @"(?<=(class|new) )[^\(]+|(?<=\s)[A-Z]+.*?(?=\.)"
 
-    Operators = ". : + - * / % & | ^ ! ~ = < > ?"
+    Operators = ". : + - * / % & | ^ ! ~ == <= >= < > ?"
 
     Preprocessors = "#if #else #elif #endif #define #undef #warning "
                   + "#error #line #region #endregion #pragma"
@@ -140,6 +144,7 @@ let fsharp = SignificantWhiteSpaceLanguage {
     StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\)'"
     CommentMatcher = @"\(\*.*?\*\)|//.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
+    FunctionMatcher = @"(?<=(class|module|new) )[^\ ]+|(?<=\s)[A-Z]+.*?(?=\.)"
 
     Operators = "+ - _ -> ->> <- [< >] [| |] [ ] <@@ @@> <@| |@> <@. .@> <@ @> |> < > |"
 
@@ -157,6 +162,7 @@ let python = SignificantWhiteSpaceLanguage {
     StringMatcher = @"r?"""""".*?(?!\\).""""""|r?""""|r?"".*?(?!\\).""|r?''|r?'[^\s]*?(?!\\)'"
     CommentMatcher = @"#.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
+    FunctionMatcher = @"(?<=(class|def) )[^\(]+"
 
     Operators = "+ - * / % <> != == < >"
 
