@@ -2,6 +2,7 @@
   <Reference Relative="..\MAB.SyntaxHighlighter\bin\Debug\net472\MAB.SyntaxHighlighter.dll">C:\Src\MAB.SyntaxHighlighter\MAB.SyntaxHighlighter\bin\Debug\net472\MAB.SyntaxHighlighter.dll</Reference>
   <NuGetReference>FSharp.Core</NuGetReference>
   <Namespace>MAB.SyntaxHighlighter</Namespace>
+  <Namespace>MAB.SyntaxHighlighter.Languages</Namespace>
   <Namespace>System.IO</Namespace>
 </Query>
 
@@ -12,13 +13,23 @@ Util.CurrentQueryPath
 let readFile lang = 
     File.ReadAllText (sprintf "samples\%s.txt" lang)
 
-let languages = ["json"; "javascript"; "html"; "csharp"; "fsharp"; "python"]
+let languageMap = Map.ofList [
+    ("csharp", (csharp, "DateTime"))
+    ("fsharp", (fsharp, ""))
+    ("javascript", (javascript, ""))
+    ("json", (javascript, ""))
+    ("python", (python, ""))
+    ("html", (html, ""))
+]
+
+// let languages = ["json"; "javascript"; "html"; "csharp"; "fsharp"; "python"]
+let languages = ["csharp"]
 
 let sources = 
     languages |> List.mapi (fun ord lang -> ((ord, lang), lang |> readFile)) |> Map.ofList
 
 let format =
-    SyntaxHighlighter.formatCode SyntaxHighlighter.defaultLanguageMap
+    SyntaxHighlighter.formatCode languageMap
 
 let results = 
     sources |> Map.map (fun (_, lang) code -> code |> format lang)

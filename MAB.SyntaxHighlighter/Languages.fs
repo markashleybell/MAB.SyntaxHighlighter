@@ -42,6 +42,8 @@ module Defaults =
     let NUMBER_GROUP = 6
     [<Literal>]
     let FUNCTION_GROUP = 7
+    [<Literal>]
+    let TYPE_GROUP = 8
     
     let numberMatcher = @"\b[+-]?\d+(?:\.\d+)?"
 
@@ -54,6 +56,7 @@ module Defaults =
             (m.Groups.[OPERATOR_GROUP], (span "o"))
             (m.Groups.[NUMBER_GROUP], (span "n"))
             (m.Groups.[FUNCTION_GROUP], (span "f"))
+            (m.Groups.[TYPE_GROUP], (span "t"))
         ]
 
         let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)

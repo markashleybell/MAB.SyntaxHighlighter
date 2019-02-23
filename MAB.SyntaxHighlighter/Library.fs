@@ -37,15 +37,15 @@ open System.Text
 open System.Text.RegularExpressions
 
 let defaultLanguageMap = Map.ofList [
-    ("cs", csharp)
-    ("csharp", csharp)
-    ("fs", fsharp)
-    ("fsharp", fsharp)
-    ("js", javascript)
-    ("javascript", javascript)
-    ("json", javascript)
-    ("python", python)
-    ("html", html)
+    ("cs", (csharp, ""))
+    ("csharp", (csharp, ""))
+    ("fs", (fsharp, ""))
+    ("fsharp", (fsharp, ""))
+    ("js", (javascript, ""))
+    ("javascript", (javascript, ""))
+    ("json", (javascript, ""))
+    ("python", (python, ""))
+    ("html", (html, ""))
 ]
 
 let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
@@ -76,7 +76,7 @@ let buildRegex (separated: string) =
 let concatenateRegex rxList =
     rxList |> List.map (sprintf "(%s)") |> String.concat "|"
 
-let formatCode (languages: Map<string, Language>) languageId (code: string) = 
+let formatCode (languages: Map<string, (Language * string)>) languageId (code: string) = 
     let found =  languages.TryFind languageId
 
     // Note that we escape HTML chars at this point
@@ -85,7 +85,7 @@ let formatCode (languages: Map<string, Language>) languageId (code: string) =
     match found with
     | None -> 
         (false, None, code')
-    | Some langType -> 
+    | Some (langType, types) -> 
         match langType with
         | CLikeLanguage lang ->
             let regexList = [
@@ -96,6 +96,7 @@ let formatCode (languages: Map<string, Language>) languageId (code: string) =
                 (lang.Operators |> buildRegex)
                 lang.NumberMatcher
                 lang.FunctionMatcher
+                (types |> buildRegex)
             ]
 
             let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
