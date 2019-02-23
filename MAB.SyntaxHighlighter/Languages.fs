@@ -119,9 +119,9 @@ let csharp = CLikeLanguage {
     StringMatcher = @"@?""""|@?"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
     CommentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
-    FunctionMatcher = @"(?<=(class|new) )[^\(]+|(?<=\s)[A-Z]+.*?(?=\.)"
+    FunctionMatcher = @"(?<=class )[A-Za-z0-9_]+|(?<!new )(?<= )[A-Za-z0-9_]+(?=\()|(?<=\s)[A-Z]+[A-Za-z0-9_]+(?=\.[A-Za-z0-9\.]+\()"
 
-    Operators = ". : + - * / % & | ^ ! ~ == <= >= < > ?"
+    Operators = ". : += -= + - * / % & | ^ ! ~ == <= >= < (?<!\=)> ?"
 
     Preprocessors = "#if #else #elif #endif #define #undef #warning "
                   + "#error #line #region #endregion #pragma"
@@ -146,7 +146,7 @@ let javascript = CLikeLanguage {
     NumberMatcher = Defaults.numberMatcher
     FunctionMatcher = @"(?<=(function) )[^(]+|(?<=\s)[A-Z]+.*?(?=\b)"
 
-    Operators = ". + - * / % & | ^ ! ~ === !== => <= >= < >"
+    Operators = ". + - * / % & | ^ ! ~ === !== <= >= < (?<!\=)>"
 
     Preprocessors = @"@\w*"
 

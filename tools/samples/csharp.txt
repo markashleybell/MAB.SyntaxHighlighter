@@ -1,4 +1,46 @@
 
+var resultList = items
+    .SelectMany(x => x.IntArray)
+    .Select(x => x[1])
+    .Distinct()
+    .ToList();
+
+var intVar = myVal == 1
+    ? Convert.ToInt32(longVariableName.GetValue())
+    : new DynamicConfiguration(myVal).GetValue();
+
+public static partial class DateTimeExtensions
+{
+    public static DateTime FirstDayOfWeek(this DateTime dt)
+    {
+        var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
+        var diff = dt.DayOfWeek - culture.DateTimeFormat.FirstDayOfWeek;
+        if(diff < 0)
+            diff += 7;
+        return dt.AddDays(-diff).Date;
+    }
+
+    public static DateTime LastDayOfWeek(this DateTime dt)
+    {
+        return dt.FirstDayOfWeek().AddDays(6);
+    }
+
+    public static DateTime FirstDayOfMonth(this DateTime dt)
+    {
+        return new DateTime(dt.Year, dt.Month, 1);
+    }
+
+    public static DateTime LastDayOfMonth(this DateTime dt)
+    {
+        return dt.FirstDayOfMonth().AddMonths(1).AddDays(-1);
+    }
+
+    public static DateTime FirstDayOfNextMonth(this DateTime dt)
+    {
+        return dt.FirstDayOfMonth().AddMonths(1);
+    }
+}
+
 
 // This is a comment
 var test = new DateTime(2019, 2, 10);
