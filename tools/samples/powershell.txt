@@ -1,0 +1,58 @@
+function Remove-FileFromDropbox { 
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$TargetPath,
+        [Parameter(Mandatory=$true)]
+        [string]$AccessToken
+    )
+
+    $body = '{ "path": "' + $TargetPath + '" }'
+
+    $authorization = "Bearer $AccessToken"
+
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+
+    $headers.Add("Authorization", $authorization)
+    $headers.Add("Content-Type", 'application/json')
+
+    Invoke-RestMethod `
+        -Uri https://api.dropboxapi.com/2/files/delete_v2 `
+        -Method Post `
+        -Headers $headers `
+        -Body $body
+}
+
+$AccessToken = '{YOUR_ACCESS_TOKEN_HERE}'
+$BackupPath 'C:\temp\db-backups'
+$DatabaseNames = 'database1', 'database2'
+
+$dateStamp = (Get-Date).ToString("yyyy-MM-dd-HHmm")
+
+$DatabaseNames | ForEach-Object {
+    $databaseName = $_
+    $backupFilename = "$databaseName-$dateStamp.bak"
+    $backupFilePath = "$BackupPath\$backupFilename"
+
+    $command = "BACKUP DATABASE [$databaseName] TO DISK='$backupFilePath' WITH COMPRESSION, INIT, STATS = 10"
+
+    # Perform the database backup to a local folder
+    Invoke-Sqlcmd -HostName 'localhost' -Query $command
+
+    # Send the backup file to Dropbox
+    Upload-FileToDropbox `
+        -SourcePath $backupFilePath `
+        -TargetPath "/$backupFilename" `
+        -AccessToken $AccessToken
+
+    # Get all but the last three backups
+    $oldFiles = 
+        Get-ChildItem $BackupPath -Filter "$databaseName*.bak" | 
+        Sort-Object CreationTime -Descending | 
+        Select-Object -Skip 3
+    
+    # Delete the old backups from Dropbox
+    $oldFiles | ForEach-Object { Remove-FileFromDropbox -TargetPath "/$_" -AccessToken $AccessToken }
+    
+    # Delete the old backups locally
+    $oldFiles | Remove-Item -Force
+}

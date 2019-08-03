@@ -13,6 +13,17 @@ type CLikeLanguage = {
     MatchEvaluator: Match -> string
 }
 
+type CLikeCaseInsensitiveLanguage = {
+    StringMatcher: string
+    NumberMatcher: string
+    CommentMatcher: string
+    FunctionMatcher: string
+    Operators: string
+    Preprocessors: string
+    Keywords: string
+    MatchEvaluator: Match -> string
+}
+
 type SignificantWhiteSpaceLanguage = {
     StringMatcher: string
     NumberMatcher: string
@@ -53,6 +64,7 @@ type StyleLanguage = {
 
 type Language =
     | CLikeLanguage of CLikeLanguage
+    | CLikeCaseInsensitiveLanguage of CLikeCaseInsensitiveLanguage
     | SignificantWhiteSpaceLanguage of SignificantWhiteSpaceLanguage
     | XmlLanguage of XmlLanguage
     | QueryLanguage of QueryLanguage

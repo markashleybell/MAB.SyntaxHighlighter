@@ -103,6 +103,21 @@ let formatCode (languages: Map<string, (Language * string)>) languageId (code: s
             let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
 
             (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
+        | CLikeCaseInsensitiveLanguage lang ->
+            let regexList = [
+                lang.CommentMatcher
+                lang.StringMatcher
+                (lang.Preprocessors |> buildRegex)
+                (lang.Keywords |> buildRegex)
+                (lang.Operators |> buildRegex)
+                lang.NumberMatcher
+                lang.FunctionMatcher
+                (types |> buildRegex)
+            ]
+
+            let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline ||| RegexOptions.IgnoreCase)
+
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
         | SignificantWhiteSpaceLanguage lang ->
             let regexList = [
                 lang.CommentMatcher

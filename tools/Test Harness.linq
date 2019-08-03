@@ -21,10 +21,11 @@ let languageMap = Map.ofList [
     ("python", (python, ""))
     ("html", (html, ""))
     ("css", (css, ""))
+    ("powershell", (powershell, ""))
 ]
 
 // let languages = ["json"; "javascript"; "html"; "csharp"; "fsharp"; "python"]
-let languages = ["css"]
+let languages = ["powershell"]
 
 let sources = 
     languages |> List.mapi (fun ord lang -> ((ord, lang), lang |> readFile)) |> Map.ofList
@@ -52,5 +53,5 @@ htmlOutput |> Dump |> ignore
 
 htmlOutput
 |> (fun html -> ((File.ReadAllText "template.html"), html))
-|> (fun (tmpl, html) -> Regex.Replace (tmpl, "{{CONTENT}}", html))
+|> (fun (tmpl, html) -> Regex.Replace (tmpl, "\{\{CONTENT\}\}", html.Replace("$", "$$")))
 |> (fun output -> File.WriteAllText (@"output\index.html", output))

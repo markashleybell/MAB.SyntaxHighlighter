@@ -243,3 +243,20 @@ let css = StyleLanguage {
 
     MatchEvaluator = Css.matchEvaluator
 }
+
+let powershell = CLikeCaseInsensitiveLanguage {
+    StringMatcher = @"""""|"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
+    CommentMatcher = @"\<\#.*?\#\>|#.*?(?=\r|\n)"
+    NumberMatcher = Defaults.numberMatcher
+    FunctionMatcher = @"(?<=(function) )[^(]+|(?<=[\s\(])[A-Z]+.*?(?=[^\w\-])"
+
+    Operators = ". + - * / % & | ^ ! ~ === !== <= >= < (?<!\=)>"
+
+    Preprocessors = @"@\w*"
+
+    Keywords = "begin break catch continue data do dynamicparam else elseif end exit \bfilter finally "
+             + "for foreach\b from function if in param process return switch throw trap try until while "
+             + "local private where $true $false string int parameter"
+
+    MatchEvaluator = Defaults.matchEvaluator
+}
