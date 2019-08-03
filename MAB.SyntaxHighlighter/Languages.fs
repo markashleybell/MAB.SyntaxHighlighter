@@ -248,7 +248,7 @@ let powershell = CLikeCaseInsensitiveLanguage {
     StringMatcher = @"""""|"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
     CommentMatcher = @"\<\#.*?\#\>|#.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
-    FunctionMatcher = @"(?<=(function) )[^(]+|(?<=[\s\(])[A-Z]+.*?(?=[^\w\-])"
+    FunctionMatcher = @"(?<=[\s\(])[A-Z]+.*?(?=[^\w\-])"
 
     Operators = ". + - * / % & | ^ ! ~ === !== <= >= < (?<!\=)>"
 
