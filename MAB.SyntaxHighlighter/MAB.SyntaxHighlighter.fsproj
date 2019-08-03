@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.3-alpha</Version>
+    <Version>0.0.4-alpha</Version>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/markashleybell/MAB.SyntaxHighlighter.git</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/markashleybell/MAB.SyntaxHighlighter/blob/master/LICENSE.md</PackageLicenseUrl>
@@ -13,6 +13,7 @@
     <PackageTags>syntax highlighter</PackageTags>
     <Company>Mark Ashley Bell</Company>
     <Authors>Mark Ashley Bell</Authors>
+    <FileVersion>0.0.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
