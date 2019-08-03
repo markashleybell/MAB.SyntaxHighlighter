@@ -52,7 +52,7 @@ let defaultLanguageMap = Map.ofList [
 let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
 
 let regexReplacements = 
-    [|'&'; '?'; '*'; '.'; '<'; '>'; '['; ']'; '^'; '|'; '('; ')'; '#'; '+'|] 
+    [|'&'; '?'; '*'; '.'; '<'; '>'; '['; ']'; '^'; '|'; '('; ')'; '#'; '+'; '$'|] 
     |> Array.map (fun c -> (c.ToString(), c |> sprintf @"\%c"))
 
 let htmlEncode str =
