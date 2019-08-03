@@ -44,8 +44,16 @@ type QueryLanguage = {
     MatchEvaluator: Match -> string
 }
 
+type StyleLanguage = {
+    PropertyMatcher: string
+    ValueMatcher: string
+    CommentMatcher: string
+    MatchEvaluator: Match -> string
+}
+
 type Language =
     | CLikeLanguage of CLikeLanguage
     | SignificantWhiteSpaceLanguage of SignificantWhiteSpaceLanguage
     | XmlLanguage of XmlLanguage
     | QueryLanguage of QueryLanguage
+    | StyleLanguage of StyleLanguage

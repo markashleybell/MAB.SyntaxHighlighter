@@ -20,10 +20,11 @@ let languageMap = Map.ofList [
     ("json", (javascript, ""))
     ("python", (python, ""))
     ("html", (html, ""))
+    ("css", (css, ""))
 ]
 
 // let languages = ["json"; "javascript"; "html"; "csharp"; "fsharp"; "python"]
-let languages = ["csharp"]
+let languages = ["css"]
 
 let sources = 
     languages |> List.mapi (fun ord lang -> ((ord, lang), lang |> readFile)) |> Map.ofList

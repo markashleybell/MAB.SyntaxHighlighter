@@ -46,6 +46,7 @@ let defaultLanguageMap = Map.ofList [
     ("json", (javascript, ""))
     ("python", (python, ""))
     ("html", (html, ""))
+    ("css", (css, ""))
 ]
 
 let htmlReplacements = [|("&", "&amp;"); ("<", "&lt;"); (">", "&gt;")|]
@@ -131,4 +132,15 @@ let formatCode (languages: Map<string, (Language * string)>) languageId (code: s
             (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
         | QueryLanguage lang -> 
             (false, None, code')
+        | StyleLanguage lang -> 
+            let regexList = [
+                lang.CommentMatcher
+                lang.ValueMatcher
+                lang.PropertyMatcher
+                (types |> buildRegex)
+            ]
+
+            let matcher = new Regex((regexList |> concatenateRegex), RegexOptions.Singleline)
+
+            (true, Some matcher, matcher.Replace(code', new MatchEvaluator(lang.MatchEvaluator)))
 

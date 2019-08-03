@@ -65,7 +65,7 @@ module Defaults =
         | None -> failwith "Match type is unknown"
         | Some (_, wrapf) -> wrapf (m.ToString())
 
- module Html = 
+module Html = 
     [<Literal>]
     let ATTRIBUTE_VALUE_GROUP = 1
     [<Literal>]
@@ -110,6 +110,31 @@ module Defaults =
             (m.Groups.[TAG_NAME_GROUP], (span "t"))
             (m.Groups.[TAG_ATTRIBUTES_GROUP], replaceAttributes)
             (m.Groups.[ENTITY_GROUP], (span "k"))
+        ]
+
+        let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)
+
+        match suceededMatch with
+        | None -> failwith "Match type is unknown"
+        | Some (_, wrapf) -> wrapf (m.ToString())
+
+module Css = 
+    [<Literal>]
+    let COMMENT_GROUP = 1
+    [<Literal>]
+    let VALUE_GROUP = 2
+    [<Literal>]
+    let PROPERTY_GROUP = 3
+    
+    let valueMatcher = @"(?<=: ).*?(?=;)"
+
+    let propertyMatcher = @"(?<=\s)[a-z\-]+(?=:)"
+
+    let matchEvaluator (m: Match) =
+        let matchGroups = [
+            (m.Groups.[COMMENT_GROUP], wrapComment)
+            (m.Groups.[VALUE_GROUP], (span "n"))
+            (m.Groups.[PROPERTY_GROUP], (span "k"))
         ]
 
         let suceededMatch = matchGroups |> Seq.tryFind (fun (grp, _) -> grp.Success)
@@ -200,8 +225,6 @@ let python = SignificantWhiteSpaceLanguage {
     MatchEvaluator = Defaults.matchEvaluator
 }
 
-let attributeMatcher = @"("".*?""|'.*?')|([\w:-]+)"
-
 let html = XmlLanguage {
     EmbeddedJavascriptMatcher = @"(?<=&lt;script(?:\s.*?)?&gt;).+?(?=&lt;/script&gt;)"
     CommentMatcher = @"&lt;!--.*?--&gt;"
@@ -210,5 +233,13 @@ let html = XmlLanguage {
     TagAttributesMatcher = @"(?<=&lt;(?!%)/?!?\??[\w:-]+).*?(?=(?<!%)/?&gt;)"
     EntityMatcher = @"&amp;\w+;"
 
-    MatchEvaluator = (Html.matchEvaluator attributeMatcher)
+    MatchEvaluator = (Html.matchEvaluator @"("".*?""|'.*?')|([\w:-]+)")
+}
+
+let css = StyleLanguage {
+    CommentMatcher = @"/\*.*?\*/|//.*?(?=\r|\n)"
+    PropertyMatcher = Css.propertyMatcher
+    ValueMatcher = Css.valueMatcher
+
+    MatchEvaluator = Css.matchEvaluator
 }
