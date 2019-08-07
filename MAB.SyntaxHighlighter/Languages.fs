@@ -245,7 +245,7 @@ let css = StyleLanguage {
 }
 
 let powershell = CLikeCaseInsensitiveLanguage {
-    StringMatcher = @"""""|"".*?(?!\\).""|''|'[^\s]*?(?!\\).'"
+    StringMatcher = @"''|'[^']*?(?!\\).'|""""|""[^""]*?(?!\\)."""
     CommentMatcher = @"\<\#.*?\#\>|#.*?(?=\r|\n)"
     NumberMatcher = Defaults.numberMatcher
     FunctionMatcher = @"(?<=[\s\(])[A-Z]+.*?(?=[^\w\-])"
